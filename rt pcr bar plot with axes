@@ -112,3 +112,40 @@ print(p)
 
 
 
+# Read the Excel file with Ct values
+data <- read_excel("C:/Users/vedika/Desktop/RT-PCR/RT-PCR.xlsx")
+
+# Define custom order for the Experiment categories based on the order in the Excel file
+custom_order <- unique(data$Experiment)
+
+# Set the "Experiment" variable with the custom order of levels
+data$Experiment <- factor(data$Experiment, levels = custom_order)
+
+# Define custom colors for the Experiment categories
+custom_colors <- c("gold", "darkgreen", "darkviolet")
+
+# Set the levels of the Gene variable based on the order in the Excel file
+data$Gene <- factor(data$Gene, levels = unique(data$Gene))
+
+
+# Create the ggplot plot with thicker error bars
+p <- ggplot(data, aes(x = Gene, y = FoldChange, fill = Experiment)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  geom_errorbar(aes(ymin = FoldChange - SD, ymax = FoldChange + SD),
+                width = 0.4,  # Increase the width for thicker error bars
+                position = position_dodge(0.9)) +
+  labs(title = "Fold Change Bar Plot with Standard Error Error Bars",
+       x = "Gene", y = "Fold Change") +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1, color = "black", size = 12),  # Customize x-axis labels
+    axis.title.x = element_text(size = 14),  # Customize x-axis title font size
+    axis.title.y = element_text(size = 14),  # Customize y-axis title font size
+    plot.title = element_text(size = 16, face = "bold"),  # Customize plot title font size and style
+    legend.title = element_blank(),  # Hide legend title
+    legend.text = element_text(size = 12),  # Customize legend text font size
+    legend.position = "right"  # Adjust legend position
+  ) +
+  scale_fill_manual(values = custom_colors)  # Set custom colors for fill
+
+# Print the plot
+print(p)
